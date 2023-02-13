@@ -5,7 +5,75 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script>
+  const handleResponse = (response) => {
+      response.text().then((resText) => {
+       
+        const contentType = response.headers.get('Content-Type');
+        let h1;
+        let p;
 
+        const content = document.querySelector('#content');
+        const page = document.querySelector('#page');
+        if (document.body.contains(document.querySelector("#statusTitle"))) {
+          h1 = document.querySelector('#statusTitle');
+          p = document.querySelector('#statusMessage');
+        } else {
+          h1 = document.createElement('h1');
+          h1.setAttribute("id", "statusTitle");
+          p = document.createElement('p');
+          p.setAttribute("id", "statusMessage");
+        }
+
+        debugger;
+
+        if(contentType === 'application/json') {
+          //Parse the json back into a javascript object, and display the data.
+          const parsedResponse = JSON.parse(resText);
+          console.log(parsedResponse);
+          h1.textContent = `${page.selectedOptions[0].outerText}`;
+          p.textContent = `Message: ${parsedResponse.message}`;
+        } else if (contentType === 'text/xml') { 
+          const parsedResponse = new window.DOMParser().parseFromString(resText, 'text/xml');
+          console.log(parsedResponse);
+          h1.textContent = `${page.selectedOptions[0].outerText}`;
+          p.textContent = 'Message: ' + parsedResponse.querySelector('message').textContent;
+        }
+
+        //Add the elements to the screen.
+        content.appendChild(h1);
+        content.appendChild(p);    
+      });
+    };
+
+    const sendFetchRequest = (url, acceptedType) => {
+      const options = {
+        method: 'GET',
+        headers: {'Accept': acceptedType},
+      }
+
+      const fetchPromise = fetch(url, options);
+
+      console.log("sendButton pressed");
+
+      debugger;
+
+      fetchPromise.then((response) => { handleResponse(response) });
+    };
+
+    const init = () => {
+    
+      const sendButton = document.querySelector("#send");
+      const page = document.querySelector('#page');
+      const type = document.querySelector('#type');
+
+      const sendRequest = () => sendFetchRequest(page.value, type.value);
+
+      sendButton.addEventListener('click', sendRequest);
+
+      debugger;
+    };
+
+    window.onload = init;
   </script>
 </head>
 <body>
