@@ -30,12 +30,20 @@
           //Parse the json back into a javascript object, and display the data.
           const parsedResponse = JSON.parse(resText);
           console.log(parsedResponse);
-          h1.textContent = `${page.selectedOptions[0].outerText}`;
+          if (page.selectedOptions[0].outerText === "Not Found") {
+            h1.textContent = `Resource Not Found`;
+          } else {
+            h1.textContent = `${page.selectedOptions[0].outerText}`;
+          }
           p.textContent = `Message: ${parsedResponse.message}`;
         } else if (contentType === 'text/xml') { 
           const parsedResponse = new window.DOMParser().parseFromString(resText, 'text/xml');
           console.log(parsedResponse);
-          h1.textContent = `${page.selectedOptions[0].outerText}`;
+          if (page.selectedOptions[0].outerText === "Not Found") {
+            h1.textContent = `Resource Not Found`;
+          } else {
+            h1.textContent = `${page.selectedOptions[0].outerText}`;
+          }
           p.textContent = 'Message: ' + parsedResponse.querySelector('message').textContent;
         }
 
